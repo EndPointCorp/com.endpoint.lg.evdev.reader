@@ -6,7 +6,7 @@ Reads events from an evdev input device, publishes to a route.
   </description>
 
   <identifyingName>com.endpoint.lg.evdev.reader</identifyingName>
-  <version>2.0.0</version>
+  <version>2.1.0</version>
 
   <deployments>
     <deployment type="testdeploy" location="${deployment.test.deploy}" />

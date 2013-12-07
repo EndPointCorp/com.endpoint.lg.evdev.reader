@@ -16,12 +16,11 @@
 
 package com.endpoint.lg.evdev.reader;
 
+import com.endpoint.lg.support.domain.InputEvent;
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
 
 import com.endpoint.lg.evdev.reader.EvdevReaderLoop;
-
-import java.util.Map;
 
 /**
  * This activity reads events from an input device and routes them as JSON.
@@ -55,9 +54,10 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements Evde
    *
    * @param event a map of the event data
    */
-  public void onInputEvent(Map<String, Object> event) {
+  public void onInputEvent(InputEvent event) {
+    getLog().debug(event.getJsonBuilder());
     if (isActivated())
-      sendOutputJson("event", event);
+      sendOutputJsonBuilder("event", event.getJsonBuilder());
   }
 
   /**

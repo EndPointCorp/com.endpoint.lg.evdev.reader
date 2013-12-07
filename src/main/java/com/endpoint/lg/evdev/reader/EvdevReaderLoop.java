@@ -16,6 +16,7 @@
 
 package com.endpoint.lg.evdev.reader;
 
+import com.endpoint.lg.support.domain.InputEvent;
 import interactivespaces.util.concurrency.CancellableLoop;
 
 import java.io.File;
@@ -24,9 +25,7 @@ import java.io.IOException;
 import java.io.FileNotFoundException;
 import java.nio.ByteBuffer;
 import java.nio.channels.FileChannel;
-import java.util.Map;
 import java.util.List;
-import com.google.common.collect.Maps;
 import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 
@@ -38,26 +37,6 @@ import com.google.common.io.Closeables;
  * @author Matt Vollrath <matt@endpoint.com>
  */
 public class EvdevReaderLoop extends CancellableLoop {
-
-  /**
-   * The size of a raw event struct.
-   */
-  public static final int EVENT_SZ = 24;
-
-  /**
-   * Byte offset of a raw event struct's <code>type</code> attribute.
-   */
-  public static final int OFFSET_TYPE  = 16;
-
-  /**
-   * Byte offset of a raw event struct's <code>code</code> attribute.
-   */
-  public static final int OFFSET_CODE  = 18;
-
-  /**
-   * Byte offset of a raw event struct's <code>value</code> attribute.
-   */
-  public static final int OFFSET_VALUE = 20;
 
   /**
    * A stream from which to create a channel.
@@ -73,11 +52,6 @@ public class EvdevReaderLoop extends CancellableLoop {
    * A buffer for raw event data.
    */
   private ByteBuffer eventBuffer;
-
-  /**
-   * A buffer for parsed event data.
-   */
-  private Map<String, Object> event;
 
   /**
    * The list of attached event listeners.
@@ -103,46 +77,13 @@ public class EvdevReaderLoop extends CancellableLoop {
   }
 
   /**
-   * Grabs an <code>int</code> out of a <code>ByteBuffer</code>.
-   * Flips endian-ness for compatibility.
-   *
-   * @param raw   a ByteBuffer
-   * @param start the starting index of the desired int
-   * @return      an int pulled from the buffer
-   */
-  private static int sliceToInt(ByteBuffer buffer, int start) {
-    return (int)(
-        (buffer.get(start)   & 0xFF)
-      | (buffer.get(start+1) & 0xFF) << 8
-      | (buffer.get(start+2) & 0xFF) << 16
-      | (buffer.get(start+3) & 0xFF) << 24
-      );
-  }
-
-  /**
-   * Grabs a <code>short</code> out of a <code>ByteBuffer</code>.
-   * Flips endian-ness for compatibility.
-   *
-   * @param raw   a ByteBuffer
-   * @param start the starting index of the desired short
-   * @return      a short pulled from the buffer
-   */
-  private static short sliceToShort(ByteBuffer buffer, int start) {
-    return (short)(
-      (buffer.get(start)   & 0xFF)
-    | (buffer.get(start+1) & 0xFF) << 8
-    );
-  }
-
-  /**
    * Creates an EventReaderLoop instance with the given device location.
    *
    * @param location the filesystem location of a readable input device
    * @throws Exception
    */
   public EvdevReaderLoop(String location) throws Exception {
-    eventBuffer = ByteBuffer.allocate(EVENT_SZ);
-    event = Maps.newHashMap();
+    eventBuffer = ByteBuffer.allocate(InputEvent.EVENT_SZ);
 
     File deviceNode = new File(location);
 
@@ -166,6 +107,8 @@ public class EvdevReaderLoop extends CancellableLoop {
    */
   @Override
   protected void loop() throws InterruptedException {
+    InputEvent event;
+    
     eventBuffer.clear();
 
     try {
@@ -177,9 +120,7 @@ public class EvdevReaderLoop extends CancellableLoop {
 
     eventBuffer.flip();
 
-    event.put( "type",  sliceToShort ( eventBuffer, OFFSET_TYPE  ));
-    event.put( "code",  sliceToShort ( eventBuffer, OFFSET_CODE  ));
-    event.put( "value", sliceToInt   ( eventBuffer, OFFSET_VALUE ));
+    event = new InputEvent(eventBuffer);
 
     for (InputEventListener listener : listeners) {
       listener.onInputEvent(event);
@@ -222,7 +163,7 @@ public class EvdevReaderLoop extends CancellableLoop {
    * An interface for input event listeners.
    */
   public interface InputEventListener {
-    void onInputEvent(Map<String, Object> event);
+    void onInputEvent(InputEvent event);
     void onError(Exception error);
   }
 }
