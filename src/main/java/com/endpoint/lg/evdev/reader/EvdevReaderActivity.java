@@ -16,7 +16,7 @@
 
 package com.endpoint.lg.evdev.reader;
 
-import com.endpoint.lg.support.domain.InputEvent;
+import com.endpoint.lg.support.domain.evdev.InputEvent;
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
 
