@@ -17,10 +17,9 @@
 package com.endpoint.lg.evdev.reader;
 
 import com.endpoint.lg.support.domain.evdev.InputEvent;
+
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
-
-import com.endpoint.lg.evdev.reader.EvdevReaderLoop;
 
 /**
  * This activity reads events from an input device and routes them as JSON.
