@@ -40,6 +40,11 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements Evde
    * Configuration key for the device location.
    */
   private static final String CONFIGURATION_NAME_DEVICE_LOCATION = "lg.evdev.device.location";
+  
+  /**
+   * Configuration key for the device name.
+   */
+  private static final String CONFIGURATION_NAME_DEVICE_NAME = "lg.evdev.device.name";
 
   /**
    * The current EventReaderLoop instance.

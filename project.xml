@@ -1,12 +1,12 @@
 <?xml version="1.0"?>
 <project type="activity" builder="java">
-  <name>Input Device Reader</name>
+  <name>Event Device Reader</name>
   <description>
 Reads events from an evdev input device, publishes to a route.
   </description>
 
   <identifyingName>com.endpoint.lg.evdev.reader</identifyingName>
-  <version>2.1.0</version>
+  <version>1.0.0.dev</version>
 
   <deployments>
     <deployment type="testdeploy" location="${deployment.test.deploy}" />
