@@ -16,7 +16,7 @@
 
 package com.endpoint.lg.evdev.reader;
 
-import com.endpoint.lg.support.domain.evdev.InputEvent;
+import com.endpoint.lg.support.evdev.InputEvent;
 import interactivespaces.util.concurrency.CancellableLoop;
 
 import java.io.File;

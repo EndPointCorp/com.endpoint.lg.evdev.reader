@@ -16,7 +16,7 @@
 
 package com.endpoint.lg.evdev.reader;
 
-import com.endpoint.lg.support.domain.evdev.InputEvent;
+import com.endpoint.lg.support.evdev.InputEvent;
 
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
@@ -61,7 +61,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements Evde
   public void onInputEvent(InputEvent event) {
     getLog().debug(event.getJsonBuilder());
     if (isActivated())
-      sendOutputJsonBuilder("event", event.getJsonBuilder());
+      sendOutputJsonBuilder("raw", event.getJsonBuilder());
   }
 
   /**
