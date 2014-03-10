@@ -73,7 +73,7 @@ public class EventRouter extends InputEventHandlers implements ManagedResource {
     Updateable absWriter = new Updateable() {
       public void update() {
         if (absState.isDirty()) {
-          writer.publishEvent("abs", absState.getDirtyAsJsonBuilder());
+          writer.publishEvent("abs", absState.getNonZeroAsJsonBuilder());
           absState.clear();
         }
       }
