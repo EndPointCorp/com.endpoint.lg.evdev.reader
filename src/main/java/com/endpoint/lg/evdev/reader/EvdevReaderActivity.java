@@ -19,6 +19,7 @@ package com.endpoint.lg.evdev.reader;
 import com.endpoint.lg.support.evdev.InputEvent;
 
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
+import interactivespaces.util.data.json.JsonBuilder;
 import interactivespaces.InteractiveSpacesException;
 
 /**
@@ -31,70 +32,93 @@ import interactivespaces.InteractiveSpacesException;
  * RUNNING: passively reading events from the device
  * <p>
  * ACTIVE: routing events
- *
+ * 
  * @author Matt Vollrath <matt@endpoint.com>
  */
-public class EvdevReaderActivity extends BaseRoutableRosActivity implements EvdevReaderLoop.InputEventListener {
+public class EvdevReaderActivity extends BaseRoutableRosActivity implements
+    EvdevReaderLoop.InputEventListener, EventRouter.RosWriter {
 
   /**
    * Configuration key for the device location.
    */
   private static final String CONFIGURATION_NAME_DEVICE_LOCATION = "lg.evdev.device.location";
-  
+
   /**
    * Configuration key for the device name.
    */
   private static final String CONFIGURATION_NAME_DEVICE_NAME = "lg.evdev.device.name";
 
-  /**
-   * The current EventReaderLoop instance.
-   */
   private EvdevReaderLoop loop;
+  private EventRouter router;
 
   /**
    * Handles an incoming event.
-   * The keys "type", "code", and "value" are expected with numeric values.
-   * A method of the InputEventListener interface.
-   *
-   * @param event a map of the event data
+   * 
+   * @param event
+   *          the incoming event
    */
   public void onInputEvent(InputEvent event) {
-    getLog().debug(event.getJsonBuilder());
-    if (isActivated())
-      sendOutputJsonBuilder("raw", event.getJsonBuilder());
+    publishEvent("raw", event.getJsonBuilder());
+    router.handleEvent(event);
   }
 
   /**
    * Handles errors in the reader loop.
-   * A method of the InputEventListener interface.
-   *
-   * @param error an exception describing the error condition
+   * 
+   * @param error
+   *          an exception describing the error condition
    */
   public void onError(Exception error) {
     throw new InteractiveSpacesException("Error in reader loop", error);
   }
 
   /**
-   * Creates and starts a reader loop.
+   * Forward messages from the EventRouter to Ros if the activity is active.
+   * 
+   * @param key
+   *          the name of the route to publish on
+   * @param json
+   *          the message
+   */
+  public void publishEvent(String key, JsonBuilder json) {
+    if (isActivated()) {
+      sendOutputJsonBuilder(key, json);
+    }
+  }
+
+  /**
+   * Creates and starts a reader loop and a router.
    */
   @Override
   public void onActivitySetup() {
     try {
-      loop = new EvdevReaderLoop(
-        getConfiguration().getRequiredPropertyString(CONFIGURATION_NAME_DEVICE_LOCATION)
-      );
+      loop =
+          new EvdevReaderLoop(getConfiguration().getRequiredPropertyString(
+              CONFIGURATION_NAME_DEVICE_LOCATION));
     } catch (Exception e) {
       throw new InteractiveSpacesException("Error while creating reader loop", e);
     }
 
     loop.addListener(this);
-
     getManagedCommands().submit(loop);
+
+    router = new EventRouter(this, getManagedCommands());
+    addManagedResource(router);
+  }
+
+  /**
+   * Publishes the full EV_ABS state upon activation.
+   * 
+   * TODO: This is broken due to the isActivated() check in publishEvent().
+   */
+  @Override
+  public void onActivityActivate() {
+    router.syncAbs();
   }
 
   /**
    * Ensures that the reader loop is still running.
-   *
+   * 
    * @return the status of the reader loop
    */
   @Override
@@ -102,4 +126,3 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements Evde
     return loop.isRunning();
   }
 }
-
