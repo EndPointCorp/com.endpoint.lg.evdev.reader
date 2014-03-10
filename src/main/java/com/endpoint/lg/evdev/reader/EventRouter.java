@@ -27,7 +27,7 @@ import com.endpoint.lg.support.evdev.InputEventHandlers;
 import com.endpoint.lg.support.evdev.InputKeyEvent;
 import com.endpoint.lg.support.evdev.InputAbsState;
 import com.endpoint.lg.support.evdev.InputRelState;
-import com.endpoint.lg.support.evdev.EventTypes;
+import com.endpoint.lg.support.evdev.InputEventTypes;
 import com.endpoint.lg.support.evdev.InputEvent;
 
 /**
@@ -96,19 +96,19 @@ public class EventRouter extends InputEventHandlers implements ManagedResource {
     relLoop = new UpdateableLoop(relWriter);
     relLoop.setFrameRate(REFRESH_RATE);
 
-    registerHandler(EventTypes.EV_KEY, InputEventHandlers.ALL_CODES, new InputEventHandler() {
+    registerHandler(InputEventTypes.EV_KEY, InputEventHandlers.ALL_CODES, new InputEventHandler() {
       public void handleEvent(InputEvent event) {
         writer.publishEvent("key", InputKeyEvent.serialize(event));
       }
     });
 
-    registerHandler(EventTypes.EV_ABS, InputEventHandlers.ALL_CODES, new InputEventHandler() {
+    registerHandler(InputEventTypes.EV_ABS, InputEventHandlers.ALL_CODES, new InputEventHandler() {
       public void handleEvent(InputEvent event) {
         absState.update(event);
       }
     });
 
-    registerHandler(EventTypes.EV_REL, InputEventHandlers.ALL_CODES, new InputEventHandler() {
+    registerHandler(InputEventTypes.EV_REL, InputEventHandlers.ALL_CODES, new InputEventHandler() {
       public void handleEvent(InputEvent event) {
         relState.update(event);
       }
