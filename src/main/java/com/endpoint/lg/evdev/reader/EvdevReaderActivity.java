@@ -36,7 +36,7 @@ import interactivespaces.InteractiveSpacesException;
  * @author Matt Vollrath <matt@endpoint.com>
  */
 public class EvdevReaderActivity extends BaseRoutableRosActivity implements
-    EvdevReaderLoop.InputEventListener, EventRouter.RosWriter {
+    EvdevReaderLoop.InputEventListener, EvdevEventRouter.RosWriter {
 
   /**
    * Configuration key for the device location.
@@ -49,7 +49,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
   private static final String CONFIGURATION_NAME_DEVICE_NAME = "lg.evdev.device.name";
 
   private EvdevReaderLoop loop;
-  private EventRouter router;
+  private EvdevEventRouter router;
 
   /**
    * Handles an incoming event.
@@ -102,7 +102,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
     loop.addListener(this);
     getManagedCommands().submit(loop);
 
-    router = new EventRouter(this, getManagedCommands());
+    router = new EvdevEventRouter(this, getManagedCommands());
     addManagedResource(router);
   }
 

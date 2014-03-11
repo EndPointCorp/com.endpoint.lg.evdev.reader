@@ -36,7 +36,7 @@ import com.endpoint.lg.support.evdev.InputEvent;
  * 
  * @author Matt Vollrath <matt@endpoint.com>
  */
-public class EventRouter extends InputEventHandlers implements ManagedResource {
+public class EvdevEventRouter extends InputEventHandlers implements ManagedResource {
   /**
    * An interface for writing events out to the activity's routes.
    */
@@ -64,7 +64,7 @@ public class EventRouter extends InputEventHandlers implements ManagedResource {
    * @param writer
    *          Ros writer for publishing events
    */
-  public EventRouter(final RosWriter writer, ManagedCommands commands) {
+  public EvdevEventRouter(final RosWriter writer, ManagedCommands commands) {
     this.writer = writer;
     this.commands = commands;
 
