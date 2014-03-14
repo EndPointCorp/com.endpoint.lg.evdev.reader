@@ -19,37 +19,22 @@ package com.endpoint.lg.evdev.reader;
 import com.endpoint.lg.support.evdev.InputEvent;
 
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
-import interactivespaces.util.data.json.JsonBuilder;
 import interactivespaces.InteractiveSpacesException;
 
 /**
- * This activity reads events from an input device and routes them as JSON.
- * <p>
- * Lifecycle:
- * <p>
- * READY: doing nothing
- * <p>
- * RUNNING: passively reading events from the device
- * <p>
- * ACTIVE: routing events
+ * This activity reads events from an input device and writes them to a route.
  * 
  * @author Matt Vollrath <matt@endpoint.com>
  */
 public class EvdevReaderActivity extends BaseRoutableRosActivity implements
-    EvdevReaderLoop.InputEventListener, EvdevEventRouter.RosWriter {
+    EvdevReaderLoop.InputEventListener {
 
   /**
    * Configuration key for the device location.
    */
   private static final String CONFIGURATION_NAME_DEVICE_LOCATION = "lg.evdev.device.location";
 
-  /**
-   * Configuration key for the device name.
-   */
-  private static final String CONFIGURATION_NAME_DEVICE_NAME = "lg.evdev.device.name";
-
   private EvdevReaderLoop loop;
-  private EvdevEventRouter router;
 
   /**
    * Handles an incoming event.
@@ -58,8 +43,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    *          the incoming event
    */
   public void onInputEvent(InputEvent event) {
-    publishEvent("raw", event.getJsonBuilder());
-    router.handleEvent(event);
+    sendOutputJsonBuilder("raw", event.getJsonBuilder());
   }
 
   /**
@@ -70,20 +54,6 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    */
   public void onError(Exception error) {
     throw new InteractiveSpacesException("Error in reader loop", error);
-  }
-
-  /**
-   * Forward messages from the EventRouter to Ros if the activity is active.
-   * 
-   * @param key
-   *          the name of the route to publish on
-   * @param json
-   *          the message
-   */
-  public void publishEvent(String key, JsonBuilder json) {
-    if (isActivated()) {
-      sendOutputJsonBuilder(key, json);
-    }
   }
 
   /**
@@ -101,19 +71,6 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
 
     loop.addListener(this);
     getManagedCommands().submit(loop);
-
-    router = new EvdevEventRouter(this, getManagedCommands());
-    addManagedResource(router);
-  }
-
-  /**
-   * Publishes the full EV_ABS state upon activation.
-   * 
-   * TODO: This is broken due to the isActivated() check in publishEvent().
-   */
-  @Override
-  public void onActivityActivate() {
-    router.syncAbs();
   }
 
   /**
