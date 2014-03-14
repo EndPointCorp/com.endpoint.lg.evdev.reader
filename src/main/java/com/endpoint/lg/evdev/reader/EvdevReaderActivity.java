@@ -21,6 +21,8 @@ import com.endpoint.lg.support.evdev.InputEvent;
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
 
+import com.endpoint.lg.support.evdev.InputEventTypes;
+
 /**
  * This activity reads events from an input device and writes them to a route.
  * 
@@ -34,7 +36,13 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    */
   private static final String CONFIGURATION_NAME_DEVICE_LOCATION = "lg.evdev.device.location";
 
+  /**
+   * Configuration key for EV_REL to EV_ABS conversion.
+   */
+  private static final String CONFIGURATION_NAME_REL_TO_ABS = "lg.evdev.device.relToAbs";
+
   private EvdevReaderLoop loop;
+  private boolean relToAbs;
 
   /**
    * Handles an incoming event.
@@ -43,6 +51,11 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    *          the incoming event
    */
   public void onInputEvent(InputEvent event) {
+    // convert from EV_REL to EV_ABS if configured
+    if (relToAbs && event.getType() == InputEventTypes.EV_REL) {
+      event.setType(InputEventTypes.EV_ABS);
+    }
+
     sendOutputJsonBuilder("raw", event.getJsonBuilder());
   }
 
@@ -61,6 +74,8 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    */
   @Override
   public void onActivitySetup() {
+    relToAbs = getConfiguration().getPropertyBoolean(CONFIGURATION_NAME_REL_TO_ABS, false);
+
     try {
       loop =
           new EvdevReaderLoop(getConfiguration().getRequiredPropertyString(
