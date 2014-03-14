@@ -32,10 +32,9 @@ import com.google.common.collect.Lists;
 import com.google.common.io.Closeables;
 
 /**
- * A Runnable for reading events from an evdev device.
- * Emits onInputEvent when an event is read.
- * Emits onError when an error occurs post-startup.
- *
+ * A Runnable for reading events from an evdev device. Emits onInputEvent when
+ * an event is read. Emits onError when an error occurs post-startup.
+ * 
  * @author Matt Vollrath <matt@endpoint.com>
  */
 public class EvdevReaderLoop extends CancellableLoop {
@@ -62,8 +61,9 @@ public class EvdevReaderLoop extends CancellableLoop {
 
   /**
    * Adds an event listener.
-   *
-   * @param listener an instance implementing the InputEventListener interface
+   * 
+   * @param listener
+   *          an instance implementing the InputEventListener interface
    */
   public void addListener(InputEventListener listener) {
     listeners.add(listener);
@@ -71,8 +71,9 @@ public class EvdevReaderLoop extends CancellableLoop {
 
   /**
    * Removes an event listener.
-   *
-   * @param listener an instance implementing the InputEventListener interface
+   * 
+   * @param listener
+   *          an instance implementing the InputEventListener interface
    */
   public void removeListener(InputEventListener listener) {
     listeners.remove(listener);
@@ -80,8 +81,9 @@ public class EvdevReaderLoop extends CancellableLoop {
 
   /**
    * Creates an EventReaderLoop instance with the given device location.
-   *
-   * @param location the filesystem location of a readable input device
+   * 
+   * @param location
+   *          the filesystem location of a readable input device
    * @throws Exception
    */
   public EvdevReaderLoop(String location) throws Exception {
@@ -104,20 +106,20 @@ public class EvdevReaderLoop extends CancellableLoop {
 
   /**
    * Reads an event from the device and injects them into the event map.
-   *
+   * 
    * @throws InterruptedException
    */
   @Override
   protected void loop() throws InterruptedException {
     InputEvent event;
-    
+
     eventBuffer.clear();
 
     try {
       while (eventBuffer.hasRemaining())
         deviceChannel.read(eventBuffer);
     } catch (IOException e) {
-      handleError(new Exception("Caught an exception while reading from the device channel"));
+      handleException(new Exception("Caught an exception while reading from the device channel"));
     }
 
     eventBuffer.flip();
@@ -139,23 +141,16 @@ public class EvdevReaderLoop extends CancellableLoop {
   }
 
   /**
-   * Handles an uncaught exception in the loop by routing it to the error handler.
-   *
-   * @param exception an uncaught exception
+   * Handles an uncaught exception in the loop by routing it to the error
+   * handler.
+   * 
+   * @param exception
+   *          an uncaught exception
    */
   @Override
   protected void handleException(Exception exception) {
-    handleError(exception);
-  }
-
-  /**
-   * Handles errors by notifying listeners and cancelling the loop.
-   *
-   * @param error an exception describing the error condition
-   */
-  private void handleError(Exception error) {
     for (InputEventListener listener : listeners) {
-      listener.onError(error);
+      listener.onError(exception);
     }
 
     cancel();
