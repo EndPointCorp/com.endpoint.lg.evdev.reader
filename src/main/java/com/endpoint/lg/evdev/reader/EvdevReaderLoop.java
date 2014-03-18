@@ -95,9 +95,16 @@ public class EvdevReaderLoop extends CancellableLoop {
     if (!deviceNode.canRead())
       throw new Exception("Can not read from file: " + location);
 
-    deviceStream = new FileInputStream(deviceNode);
+    try {
 
-    deviceChannel = deviceStream.getChannel();
+      deviceStream = new FileInputStream(deviceNode);
+      deviceChannel = deviceStream.getChannel();
+
+    } catch (Exception e) {
+
+      cleanup();
+      throw e;
+    }
   }
 
   /**
