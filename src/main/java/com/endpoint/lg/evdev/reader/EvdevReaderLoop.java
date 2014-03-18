@@ -119,7 +119,11 @@ public class EvdevReaderLoop extends CancellableLoop {
       while (eventBuffer.hasRemaining())
         deviceChannel.read(eventBuffer);
     } catch (IOException e) {
-      handleException(new Exception("Caught an exception while reading from the device channel"));
+      // ignore i/o closed by interrupt exceptions
+      if (e.getClass() != java.nio.channels.ClosedByInterruptException.class)
+        handleException(e);
+      else
+        return;
     }
 
     eventBuffer.flip();
