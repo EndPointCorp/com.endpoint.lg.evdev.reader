@@ -156,11 +156,11 @@ public class EvdevReaderLoop extends CancellableLoop {
    */
   @Override
   protected void handleException(Exception exception) {
+    cancel();
+
     for (InputEventListener listener : listeners) {
       listener.onError(exception);
     }
-
-    cancel();
   }
 
   /**
