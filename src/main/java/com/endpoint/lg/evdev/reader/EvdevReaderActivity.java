@@ -24,7 +24,12 @@ import interactivespaces.InteractiveSpacesException;
 import com.endpoint.lg.support.evdev.InputEventTypes;
 
 /**
- * This activity reads events from an input device and writes them to a route.
+ * This activity reads events from an input device and publishes them to a route
+ * as serialized <code>InputEvent</code> structures.
+ * 
+ * <p>
+ * The Interactive Spaces controller must have read access to the configured
+ * device location to read events from the device.
  * 
  * @author Matt Vollrath <matt@endpoint.com>
  */
@@ -45,7 +50,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
   private boolean relToAbs;
 
   /**
-   * Handles an incoming event.
+   * Handles an event from the device.
    * 
    * @param event
    *          the incoming event
@@ -70,7 +75,7 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
   }
 
   /**
-   * Creates and starts a reader loop and a router.
+   * Creates and starts a reader loop.
    */
   @Override
   public void onActivitySetup() {

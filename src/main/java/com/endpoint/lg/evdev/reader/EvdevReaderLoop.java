@@ -161,6 +161,7 @@ public class EvdevReaderLoop extends CancellableLoop {
    */
   public interface InputEventListener {
     void onInputEvent(InputEvent event);
+
     void onError(Exception error);
   }
 }
