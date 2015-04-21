@@ -1,0 +1,15 @@
+*#
+*.DS_Store
+*.h
+*.swp
+*.tmp
+*.zip
+*~
+.#*
+.classpath
+.project
+.settings
+Thumbs.db
+bin
+build
+docs
