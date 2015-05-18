@@ -19,6 +19,7 @@ package com.endpoint.lg.evdev.reader;
 
 import com.endpoint.lg.support.evdev.InputEvent;
 
+import interactivespaces.activity.ActivityState;
 import interactivespaces.activity.impl.ros.BaseRoutableRosActivity;
 import interactivespaces.InteractiveSpacesException;
 
@@ -57,6 +58,12 @@ public class EvdevReaderActivity extends BaseRoutableRosActivity implements
    *          the incoming event
    */
   public void onInputEvent(InputEvent event) {
+    ActivityState state = getActivityStatus().getState();
+
+    if (! state.isRunning()) {
+      return;
+    }
+
     // convert from EV_REL to EV_ABS if configured
     if (relToAbs && event.getType() == InputEventTypes.EV_REL) {
       event.setType(InputEventTypes.EV_ABS);
