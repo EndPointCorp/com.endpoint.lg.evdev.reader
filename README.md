@@ -6,7 +6,7 @@ Java package: com.endpoint.lg.evdev.reader
 Liquid Galaxy Interactive Spaces activity that reads events from an evdev input device and publishes to a route.
 
 
-Copyright (C) 2015 Google Inc.  
+Copyright (C) 2015 Google Inc.
 Copyright (C) 2015 End Point Corporation
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not
