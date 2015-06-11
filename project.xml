@@ -8,6 +8,23 @@ Reads events from an evdev input device, publishes to a route.
   <identifyingName>com.endpoint.lg.evdev.reader</identifyingName>
   <version>1.0.1</version>
 
+  <activity type="interactivespaces_native">
+    <name>LGMultiaxisDeviceReaderActivity</name>
+    <class>com.endpoint.lg.evdev.reader.EvdevReaderActivity</class>
+    <configuration>
+      <property name="space.activity.log.level"><value>info</value></property>
+      <property name="space.activity.java.class"><value>com.endpoint.lg.evdev.reader.EvdevReaderActivity</value></property>
+      <property name="space.activity.ros.node.name"><value>liquidgalaxy/evdev/reader/${lg.evdev.device.name}</value></property>
+      <property name="space.activity.routes.outputs"><value>raw</value></property>
+      <property name="space.activity.route.output.raw"><value>/liquidgalaxy/${space.activity.group}/evdev/${lg.evdev.device.name}/raw</value></property>
+      <property name="lg.evdev.device.name"><value>default</value></property>
+      <property name="lg.evdev.device.location"><value>/dev/input/multiaxis</value></property>
+<!-- ### This feature converts all EV_REL events to EV_ABS.
+     ### For compatibility with some Space Navigators. -->
+      <property name="lg.evdev.device.relToAbs"><value>false</value></property>
+    </configuration>
+  </activity>
+
   <deployments>
     <deployment type="testdeploy" location="${deployment.test.deploy}" />
     <deployment type="testimport" location="${deployment.test.import}" />
