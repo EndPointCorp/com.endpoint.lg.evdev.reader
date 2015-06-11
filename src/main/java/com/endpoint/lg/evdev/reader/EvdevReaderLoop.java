@@ -143,7 +143,11 @@ public class EvdevReaderLoop extends CancellableLoop {
    */
   @Override
   protected void cleanup() {
-    Closeables.closeQuietly(deviceChannel);
+    try {
+      Closeables.close(deviceChannel, false);
+    } catch (IOException e) {
+      // Hrm... no logging available here?
+    }
     Closeables.closeQuietly(deviceStream);
   }
 
