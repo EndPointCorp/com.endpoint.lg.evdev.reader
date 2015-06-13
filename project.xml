@@ -12,6 +12,9 @@ Reads events from an evdev input device, publishes to a route.
     <name>LGMultiaxisDeviceReaderActivity</name>
     <class>com.endpoint.lg.evdev.reader.EvdevReaderActivity</class>
     <configuration>
+      <property name="space.activity.group">
+        <value>generic</value>
+      </property>
       <property name="space.activity.log.level"><value>info</value></property>
       <property name="space.activity.java.class"><value>com.endpoint.lg.evdev.reader.EvdevReaderActivity</value></property>
       <property name="space.activity.ros.node.name"><value>liquidgalaxy/evdev/reader/${lg.evdev.device.name}</value></property>
